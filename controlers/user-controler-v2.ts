@@ -37,7 +37,7 @@ const getUserById = async (req: any, res: any) => {
 const getUserByFullName = async (req: any, res: any) => {
     const { fullname, shul, city } = req.query;
     const names = fullname.split(" ");
-    let sqlQuery = `SELECT ${MIN_ITEMS_TO_SELECT} FROM users WHERE full_name_search LIKE ? AND (synagogue LIKE ? OR synagogue IS NULL)`;
+    let sqlQuery = `SELECT ${MIN_ITEMS_TO_SELECT} FROM users WHERE full_name_search LIKE ? AND synagogue LIKE ?`;
     for (let i = 1; i < names.length; i++) {
         sqlQuery += ` AND full_name_search LIKE ?`;
     }
@@ -51,8 +51,6 @@ const getUserByFullName = async (req: any, res: any) => {
     if (city !== 'אחר') {
         sqlParams.push(`%${city || ''}%`);
     }
-    console.log('sqlParams', sqlParams);
-    console.log('sqlQuery', sqlQuery);
 
     db.all(
         sqlQuery,
@@ -68,18 +66,19 @@ const getUserByFullName = async (req: any, res: any) => {
 
 const getUserByPhoneNumber = async (req: any, res: any) => {
     const { number, shul, city } = req.query;
-    let sqlQuery = `SELECT ${MIN_ITEMS_TO_SELECT} FROM users WHERE (home_phone LIKE ? OR husband_mobile LIKE ? OR wife_mobile LIKE ? OR whatsapp_number LIKE ? OR system_phone_1 LIKE ? OR system_phone_2 LIKE ?) AND (synagogue LIKE ? OR synagogue IS NULL)`;
+    let sqlQuery = `SELECT ${MIN_ITEMS_TO_SELECT} FROM users WHERE (home_phone LIKE ? OR husband_mobile LIKE ? OR wife_mobile LIKE ? OR whatsapp_number LIKE ? OR system_phone_1 LIKE ? OR system_phone_2 LIKE ?) AND synagogue LIKE ?`;
     if (city === 'אחר') {
         sqlQuery += ` AND city NOT IN ('ירושלים', 'מודיעין עילית', 'ביתר עילית', 'בני ברק', 'טבריה', 'גבעת זאב')`;
     } else {
-        sqlQuery += ` AND (city LIKE ? OR city IS NULL)`;
+        sqlQuery += ` AND city LIKE ?`;
     }
     const sqlParams = [
         `%${number}%`, `%${number}%`, `%${number}%`, `%${number}%`, `%${number}%`, `%${number}%`, `%${shul || ''}%`
     ];
-    if (city && city !== 'אחר') {
-        sqlParams.push(`%${city}%`);
+    if (city !== 'אחר') {
+        sqlParams.push(`%${city || ''}%`);
     }
+
     db.all(
         sqlQuery,
         sqlParams,
@@ -110,6 +109,11 @@ const getUsersByPlace = async (req: any, res: any, next: any) => {
             }
             res.send(rows);
         });
+}
+
+function debugQuery(sql: string, params: string[]) {
+  let i = 0;
+  return sql.replace(/\?/g, () => `'${params[i++]}'`);
 }
 
 export { getUsers, getUserById, getUserByFullName, getUserByPhoneNumber, getUsersByPlace }
