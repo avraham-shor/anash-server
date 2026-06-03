@@ -1,4 +1,4 @@
-import sqlite3 from "sqlite3";
+import sqlite3 from 'sqlite3';
 import fs from 'fs';
 
 const db = new sqlite3.Database('./anash-test.db');
@@ -120,19 +120,19 @@ async function fillDBWithAnash() {
 //fillDBWithAnash();
 
 async function dropTable() {
-    db.run(`DROP TABLE IF EXISTS users`);
+    db.run('DROP TABLE IF EXISTS users');
 }
 // dropTable();
 
 
 // Query data
 db.serialize(() => {
-    db.all(`SELECT * FROM users`, (err, rows) => {
+    db.all('SELECT * FROM users', (err, rows) => {
         if (err) {
             throw err;
         }
         rows.forEach(user => {
-            const userNameRev = user.full_name_search.split("").reverse().join("");
+            const userNameRev = user.full_name_search.split('').reverse().join('');
             console.log(userNameRev);
         });
         console.log(rows.length);
