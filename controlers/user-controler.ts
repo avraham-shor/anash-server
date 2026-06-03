@@ -6,7 +6,6 @@ const MIN_ITEMS_TO_SELECT = 'id, salutation, full_name_search, father_name, husb
 
 const getItemsToDisplay = (isAdmin: string) => {
     const isAdminBoolean = isAdmin === 'true';
-    console.log('isAdmin', isAdmin, typeof isAdmin, isAdminBoolean);
     return isAdminBoolean ?
         '*' :
         `id, salutation, first_name, last_name, father_name, full_name_search, wife_name, is_groom_of_rabbi, 
@@ -90,7 +89,7 @@ const getUserByPhoneNumber = async (req: any, res: any) => {
         });
 };
 
-const getUsersByPlace = async (req: any, res: any, next: any) => {
+const getUsersByPlace = async (req: any, res: any) => {
     const { shul, city } = req.query;
     let sqlQuery = `SELECT ${MIN_ITEMS_TO_SELECT} FROM users WHERE synagogue LIKE ?`;
     const sqlParams = [`%${shul || ''}%`];
