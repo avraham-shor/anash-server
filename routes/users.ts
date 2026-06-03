@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, getUserById, getUserByFullName, getUserByPhoneNumber, getUsersByPlace } from '../controlers/user-controler-v2.ts';
+import { getUsers, getUserById, getUserByFullName, getUserByPhoneNumber, getUsersByPlace } from '../controlers/user-controler.ts';
 var router = express.Router();
 
 /* GET users listing. */
